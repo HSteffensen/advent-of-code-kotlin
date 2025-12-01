@@ -36,19 +36,14 @@ fun solve1(input: List<Int>): String {
 fun solve2(input: List<Int>): String {
     var pos = 50
     var result = 0
-    for (moveVal in input) {
-        var move = moveVal
-        while (move.absoluteValue >= 100) {
-            result += 1
-            move -= move.sign * 100
-        }
-        if (move == 0) continue
+    for (move in input) {
         val startPos = pos
         pos += move
-        if (pos <= 0 && startPos != 0) {
-            result += 1
+        if (pos <= 0) {
+            val correction = if (startPos == 0) 0 else 1
+            result += (pos / -100) + correction
         } else if (pos >= 100) {
-            result += 1
+            result += pos / 100
         }
         pos = pos.mod(100)
     }
