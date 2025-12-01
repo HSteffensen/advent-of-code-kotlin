@@ -1,8 +1,5 @@
 package com.hsteffensen
 
-import kotlin.math.absoluteValue
-import kotlin.math.sign
-
 fun main() {
     assert(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
     println(solve1(parseInput(readInput(1))))
@@ -20,35 +17,30 @@ fun parseInput(input: String) =
         } * line.drop(1).toInt()
     }
 
-fun solve1(input: List<Int>): String {
-    var pos = 50
-    var result = 0
-    for (move in input) {
-        pos += move
-        pos %= 100
-        if (pos == 0) {
-            result += 1
-        }
-    }
-    return result.toString()
-}
+fun solve1(input: List<Int>): String =
+    input
+        .fold(50 to 0) { (pos, count), move ->
+            val newPos = (pos + move).mod(100)
+            newPos to (count + if (newPos == 0)1 else 0)
+        }.second
+        .toString()
 
-fun solve2(input: List<Int>): String {
-    var pos = 50
-    var result = 0
-    for (move in input) {
-        val startPos = pos
-        pos += move
-        if (pos <= 0) {
-            val correction = if (startPos == 0) 0 else 1
-            result += (pos / -100) + correction
-        } else if (pos >= 100) {
-            result += pos / 100
-        }
-        pos = pos.mod(100)
-    }
-    return result.toString()
-}
+fun solve2(input: List<Int>): String =
+    input
+        .fold(50 to 0) { (prevPos, count), move ->
+            val posMoved = prevPos + move
+            val countInc =
+                if (posMoved <= 0) {
+                    (posMoved / -100) + if (prevPos == 0) 0 else 1
+                } else if (posMoved >= 100) {
+                    posMoved / 100
+                } else {
+                    0
+                }
+            val newPos = posMoved.mod(100)
+            newPos to count + countInc
+        }.second
+        .toString()
 
 private const val EXAMPLE_1 = """L68
 L30
