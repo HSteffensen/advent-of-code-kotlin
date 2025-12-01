@@ -1,19 +1,23 @@
 package com.hsteffensen.y2025
 
 import com.hsteffensen.readInput
+import com.hsteffensen.runAvoidingWeirdGradleProblems
 
-fun main() {
-    val input = readInput(1)
-    with(Day01) {
-        assert(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
-        println(solve1(parseInput(input)))
-        assert(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
-        assert(solve2(parseInput(EXAMPLE_3)) == ANSWER_3) { "Example 3 failed" }
-        println(solve2(parseInput(input)))
+fun main(): Unit =
+    runAvoidingWeirdGradleProblems {
+        with(Day01) {
+            val input = readInput(DAY)
+            assert(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
+            println(solve1(parseInput(input)))
+            assert(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
+            assert(solve2(parseInput(EXAMPLE_3)) == ANSWER_3) { "Example 3 failed" }
+            println(solve2(parseInput(input)))
+        }
     }
-}
 
 object Day01 {
+    const val DAY = 1
+
     fun parseInput(input: String) =
         input.trim().lines().filter { it.isNotEmpty() }.map { line ->
             when (line[0]) {
