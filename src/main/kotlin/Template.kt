@@ -12,13 +12,17 @@ fun main(): Unit =
     }
 
 object DayX {
-    const val DAY = TODO()
+    val DAY: Int = TODO()
 
-    fun parseInput(input: String) = TODO()
+    fun parseInput(input: String): List<String> = TODO()
 
-    fun solve1(input: List<String>): String = TODO()
+    fun solve1(input: List<String>): String {
+        TODO()
+    }
 
-    fun solve2(input: List<String>): String = TODO()
+    fun solve2(input: List<String>): String {
+        TODO()
+    }
 
     const val EXAMPLE_1 = """"""
 
