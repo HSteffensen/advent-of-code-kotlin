@@ -30,20 +30,16 @@ object Day3 {
     fun solve2(input: List<List<Int>>): String = input.sumOf { maxJoltageForBankPart2(it) }.toString()
 
     fun maxJoltageForBankPart2(batteries: List<Int>): Long =
-        batteries.fold(mapOf(0 to 0L)) { maxSoFar, v ->
-            maxJoltageForBankPart2Helper(maxSoFar, v)
+        batteries.fold(mapOf(0 to 0L)) { largestPerSize, v ->
+            val newLargestSize = largestPerSize.keys.max() + 1
+            val largestPerSizeWithNew = if (newLargestSize <= 12) largestPerSize + mapOf(newLargestSize to 0) else largestPerSize
+            largestPerSizeWithNew.mapValues { (key, existingValue) ->
+                if (key == 0) return@mapValues 0
+                val appendDigit = (largestPerSize[key - 1]!! * 10) + v
+                val replaceLastDigit = ((existingValue / 10) * 10) + v
+                max(existingValue, max(appendDigit, replaceLastDigit))
+            }
         }[12]!!
-
-    fun maxJoltageForBankPart2Helper(
-        largestPerSize: Map<Int, Long>,
-        nextBattery: Int,
-    ): Map<Int, Long> =
-        (largestPerSize + mapOf(largestPerSize.keys.max() + 1 to 0)).mapValues { (key, existingValue) ->
-            if (key == 0) return@mapValues 0
-            val appendDigit = (largestPerSize[key - 1]!! * 10) + nextBattery
-            val replaceLastDigit = ((existingValue / 10) * 10) + nextBattery
-            max(existingValue, max(appendDigit, replaceLastDigit))
-        }
 
     const val EXAMPLE_1 = """987654321111111
 811111111111119
