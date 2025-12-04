@@ -7,10 +7,10 @@ fun main(): Unit =
     runAvoidingWeirdGradleProblems {
         with(Day01) {
             val input = readInput(DAY)
-            assert(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
+            check(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
             println(solve1(parseInput(input)))
-            assert(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
-            assert(solve2(parseInput(EXAMPLE_3)) == ANSWER_3) { "Example 3 failed" }
+            check(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
+            check(solve2(parseInput(EXAMPLE_3)) == ANSWER_3) { "Example 3 failed" }
             println(solve2(parseInput(input)))
         }
     }
@@ -31,7 +31,7 @@ object Day01 {
         input
             .fold(50 to 0) { (pos, count), move ->
                 val newPos = (pos + move).mod(100)
-                newPos to (count + if (newPos == 0)1 else 0)
+                newPos to (count + if (newPos == 0) 1 else 0)
             }.second
             .toString()
 

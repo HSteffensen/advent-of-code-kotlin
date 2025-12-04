@@ -4,9 +4,9 @@ fun main(): Unit =
     runAvoidingWeirdGradleProblems {
         with(DayX) {
             val input = readInput(DAY)
-            assert(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
+            check(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
             println(solve1(parseInput(input)))
-//            assert(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
+//            check(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
 //            println(solve2(parseInput(input)))
         }
     }
