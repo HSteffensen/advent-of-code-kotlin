@@ -3,6 +3,7 @@ package com.hsteffensen.y2025
 import com.hsteffensen.readInput
 import com.hsteffensen.runAvoidingWeirdGradleProblems
 import kotlin.math.max
+import kotlin.math.pow
 
 fun main(): Unit =
     runAvoidingWeirdGradleProblems {
@@ -12,6 +13,12 @@ fun main(): Unit =
             println(solve1(parseInput(input)))
             check(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
             println(solve2(parseInput(input)))
+
+            println("alternate solution:")
+            check(solveAlternate(parseInput(EXAMPLE_1), 2) == ANSWER_1) { "Example 1 failed" }
+            println(solveAlternate(parseInput(input), 2))
+            check(solveAlternate(parseInput(EXAMPLE_1), 12) == ANSWER_2) { "Example 2 failed" }
+            println(solveAlternate(parseInput(input), 12))
         }
     }
 
@@ -40,6 +47,21 @@ object Day3 {
                 max(existingValue, max(appendDigit, replaceLastDigit))
             }
         }[12]!!
+
+    fun solveAlternate(
+        input: List<List<Int>>,
+        size: Int,
+    ): String = input.sumOf { maxJoltageAlternate(it, size) }.toString()
+
+    fun maxJoltageAlternate(
+        batteries: List<Int>,
+        size: Int,
+    ): Long {
+        if (size == 1) return batteries.max().toLong()
+        val (i, joltage) = batteries.dropLast(size - 1).withIndex().maxBy { it.value }
+        return (joltage.toLong() * 10.toDouble().pow(size - 1).toLong()) +
+            maxJoltageAlternate(batteries.subList(i + 1, batteries.size), size - 1)
+    }
 
     const val EXAMPLE_1 = """987654321111111
 811111111111119
