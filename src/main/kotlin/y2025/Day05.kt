@@ -42,18 +42,16 @@ object Day5 {
     fun solve2(input: Input): String {
         val ranges = input.freshRanges.sortedBy { it.last }.sortedBy { it.first }
 
-        var count = 0L
-        var currentRange = ranges.first()
-        for (range in ranges.drop(1)) {
-            if (range.first <= currentRange.last) {
-                currentRange = (currentRange.first..max(range.last, currentRange.last))
-            } else {
-                count += currentRange.last - currentRange.first + 1
-                currentRange = range
+        val (almostFinalCount, finalRange) =
+            ranges.drop(1).fold(0L to ranges.first()) { (count, currentRange), range ->
+                if (range.first <= currentRange.last) {
+                    count to (currentRange.first..max(range.last, currentRange.last))
+                } else {
+                    (count + currentRange.last - currentRange.first + 1) to range
+                }
             }
-        }
-        count += currentRange.last - currentRange.first + 1
-        return count.toString()
+
+        return (almostFinalCount + finalRange.last - finalRange.first + 1).toString()
     }
 
     const val EXAMPLE_1 = """3-5
