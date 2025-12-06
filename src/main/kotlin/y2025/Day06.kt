@@ -7,8 +7,8 @@ fun main(): Unit =
     runAvoidingWeirdGradleProblems {
         with(Day6) {
             val input = readInput(DAY)
-            check(solve1(parseInput1(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
-            println(solve1(parseInput1(input)))
+            check(solve1(EXAMPLE_1) == ANSWER_1) { "Example 1 failed" }
+            println(solve1(input))
             check(solve2(EXAMPLE_1) == ANSWER_2) { "Example 2 failed" }
             println(solve2(input))
         }
@@ -17,40 +17,31 @@ fun main(): Unit =
 object Day6 {
     const val DAY: Int = 6
 
-    class Problem(
-        val parameters: List<Long>,
-        val operation: List<Long>.() -> Long,
-    )
-
-    fun parseInput1(input: String): List<Problem> {
+    fun solve1(input: String): String {
         val inputGrid =
             input.trim().lines().map { line ->
                 line.split(" ").filter { it != "" }
             }
         val transposed = (0..<inputGrid.first().size).map { i -> inputGrid.map { it[i] } }
 
-        return transposed.map { line ->
-            Problem(
-                parameters = line.dropLast(1).map { it.toLong() },
-                operation =
-                    when (line.last()) {
-                        "+" -> {
-                            List<Long>::sum
-                        }
+        return transposed
+            .sumOf { line ->
+                val parameters = line.dropLast(1).map { it.toLong() }
+                when (line.last()) {
+                    "+" -> {
+                        parameters.sum()
+                    }
 
-                        "*" -> {
-                            { reduce { a, b -> a * b } }
-                        }
+                    "*" -> {
+                        parameters.reduce { a, b -> a * b }
+                    }
 
-                        else -> {
-                            throw IllegalArgumentException("operation can only be + or *")
-                        }
-                    },
-            )
-        }
+                    else -> {
+                        throw IllegalArgumentException("operation can only be + or *")
+                    }
+                }
+            }.toString()
     }
-
-    fun solve1(input: List<Problem>): String = input.sumOf { it.parameters.run(it.operation) }.toString()
 
     fun solve2(input: String): String {
         val lines = input.trim().lines()
