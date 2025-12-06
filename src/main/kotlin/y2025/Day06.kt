@@ -7,10 +7,10 @@ fun main(): Unit =
     runAvoidingWeirdGradleProblems {
         with(Day6) {
             val input = readInput(DAY)
-            check(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
-            println(solve1(parseInput(input)))
-//            check(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
-//            println(solve2(parseInput(input)))
+            check(solve1(parseInput1(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
+            println(solve1(parseInput1(input)))
+            check(solve2(EXAMPLE_1) == ANSWER_2) { "Example 2 failed" }
+            println(solve2(input))
         }
     }
 
@@ -22,7 +22,7 @@ object Day6 {
         val operation: List<Long>.() -> Long,
     )
 
-    fun parseInput(input: String): List<Problem> {
+    fun parseInput1(input: String): List<Problem> {
         val inputGrid =
             input.trim().lines().map { line ->
                 line.split(" ").filter { it != "" }
@@ -52,8 +52,24 @@ object Day6 {
 
     fun solve1(input: List<Problem>): String = input.sumOf { it.parameters.run(it.operation) }.toString()
 
-    fun solve2(input: List<String>): String {
-        TODO()
+    fun solve2(input: String): String {
+        val lines = input.trim().lines()
+        val transposedInput =
+            (0..<lines.maxBy { it.length }.length)
+                .map { i -> lines.map { it.getOrElse(i) { ' ' } }.joinToString("").trim() }
+                .reversed()
+                .joinToString("\n")
+
+        return transposedInput
+            .split("\n\n")
+            .sumOf { chunk ->
+                val numbers = chunk.dropLast(1).split("\n").map { it.trim().toLong() }
+                when (chunk.last()) {
+                    '+' -> numbers.sum()
+                    '*' -> numbers.reduce { a, b -> a * b }
+                    else -> throw IllegalArgumentException("operation can only be + or *")
+                }
+            }.toString()
     }
 
     const val EXAMPLE_1 = """123 328  51 64 
@@ -64,7 +80,5 @@ object Day6 {
 
     const val ANSWER_1 = "4277556"
 
-    const val EXAMPLE_2 = """"""
-
-    const val ANSWER_2 = ""
+    const val ANSWER_2 = "3263827"
 }
