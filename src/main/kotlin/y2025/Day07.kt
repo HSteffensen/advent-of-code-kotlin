@@ -11,8 +11,8 @@ fun main(): Unit =
             val input = readInput(DAY)
             check(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
             println(solve1(parseInput(input)))
-//            check(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
-//            println(solve2(parseInput(input)))
+            check(solve2(parseInput(EXAMPLE_1)) == ANSWER_2) { "Example 2 failed" }
+            println(solve2(parseInput(input)))
         }
     }
 
@@ -60,8 +60,15 @@ object DayX {
             }.toString()
     }
 
-    fun solve2(input: List<String>): String {
-        TODO()
+    fun solve2(input: Grid<TachyonExperimentItem>): String {
+        val start =
+            input.grid
+                .filterValues { it == TachyonExperimentItem.Start }
+                .keys
+                .singleOrNull()
+                ?: throw IllegalStateException("Input is supposed to have only one S")
+        val beamGrid = input.grid.mapValues { (_, item) -> item to 0L }.toMutableMap()
+        return propegateBeam2(beamGrid, start).toString()
     }
 
     // propegate from pos
@@ -89,6 +96,36 @@ object DayX {
         }
     }
 
+    // propegate from pos
+    fun propegateBeam2(
+        grid: MutableMap<Pos2d, Pair<TachyonExperimentItem, Long>>,
+        pos: Pos2d,
+    ): Long =
+        when (grid[pos]?.first) {
+            null -> {
+                // outside of the grid
+                1
+            }
+
+            TachyonExperimentItem.Beam -> {
+                grid[pos]!!.second
+            }
+
+            TachyonExperimentItem.Start,
+            TachyonExperimentItem.Empty,
+            -> {
+                val count = propegateBeam2(grid, pos.first to pos.second + 1)
+                grid[pos] = TachyonExperimentItem.Beam to count
+                count
+            }
+
+            TachyonExperimentItem.Splitter -> {
+                // input never has two splitters right next to each other so we don't need to worry about tracking the count on splitters
+                propegateBeam2(grid, pos.first - 1 to pos.second) +
+                    propegateBeam2(grid, pos.first + 1 to pos.second)
+            }
+        }
+
     const val EXAMPLE_1 = """.......S.......
 ...............
 .......^.......
@@ -109,7 +146,5 @@ object DayX {
 
     const val ANSWER_1 = "21"
 
-    const val EXAMPLE_2 = """"""
-
-    const val ANSWER_2 = ""
+    const val ANSWER_2 = "40"
 }
