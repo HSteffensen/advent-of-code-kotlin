@@ -7,7 +7,7 @@ import com.hsteffensen.runAvoidingWeirdGradleProblems
 
 fun main(): Unit =
     runAvoidingWeirdGradleProblems {
-        with(DayX) {
+        with(Day7) {
             val input = readInput(DAY)
             check(solve1(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
             println(solve1(parseInput(input)))
@@ -16,7 +16,7 @@ fun main(): Unit =
         }
     }
 
-object DayX {
+object Day7 {
     const val DAY: Int = 7
 
     enum class TachyonExperimentItem {
