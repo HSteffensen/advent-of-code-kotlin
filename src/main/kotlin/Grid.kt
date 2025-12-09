@@ -5,6 +5,11 @@ typealias Pos2d = Pair<Long, Long>
 class Grid<T>(
     val grid: Map<Pos2d, T>,
 ) {
+    val minX = grid.keys.minOf { it.first }
+    val maxX = grid.keys.maxOf { it.first }
+    val minY = grid.keys.minOf { it.second }
+    val maxY = grid.keys.maxOf { it.second }
+
     fun neighbors8(pos: Pos2d): Set<Pos2d> =
         (-1..1)
             .flatMap { dx ->
