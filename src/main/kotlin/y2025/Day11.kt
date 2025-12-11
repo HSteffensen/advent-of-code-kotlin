@@ -16,20 +16,23 @@ fun main(): Unit =
                 println(solve1(parseInput(input)))
             }.also { println("Part 1 finished in $it") }
 
-//            measureTime {
-//                check(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
-//            }.also { println("Part 2 example 1 finished in $it") }
-//            measureTime {
-//                println(solve2(parseInput(input)))
-//            }.also { println("Part 2 finished in $it") }
+            measureTime {
+                check(solve2(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
+            }.also { println("Part 2 example 1 finished in $it") }
+            measureTime {
+                println(solve2(parseInput(input)))
+            }.also { println("Part 2 finished in $it") }
         }
     }
 
 object Day11 {
     const val DAY: Int = 11
 
-    const val START = "you"
+    const val START_1 = "you"
     const val END = "out"
+    const val START_2 = "svr"
+    const val REQUIRED_DAC = "dac"
+    const val REQUIRED_FFT = "fft"
 
     fun parseInput(input: String): Map<String, List<String>> =
         input.trim().lines().associate { line ->
@@ -38,9 +41,9 @@ object Day11 {
             source to destinations
         }
 
-    fun solve1(input: Map<String, List<String>>): String = countPaths(input, START, mutableMapOf(END to 1L)).toString()
+    fun solve1(input: Map<String, List<String>>): String = countPaths1(input, START_1, mutableMapOf()).toString()
 
-    fun countPaths(
+    fun countPaths1(
         graph: Map<String, List<String>>,
         current: String,
         cache: MutableMap<String, Long>,
@@ -50,14 +53,40 @@ object Day11 {
         if (cached != null) return cached
         val result =
             graph[current]!!.sumOf {
-                countPaths(graph, it, cache)
+                countPaths1(graph, it, cache)
             }
         cache[current] = result
         return result
     }
 
-    fun solve2(input: List<String>): String {
-        TODO()
+    fun solve2(input: Map<String, List<String>>): String =
+        countPaths2(
+            graph = input,
+            current = START_2,
+            cache = mutableMapOf(),
+            visitedDac = false,
+            visitedFft = false,
+        ).toString()
+
+    fun countPaths2(
+        graph: Map<String, List<String>>,
+        current: String,
+        cache: MutableMap<Triple<String, Boolean, Boolean>, Long>,
+        visitedDac: Boolean,
+        visitedFft: Boolean,
+    ): Long {
+        if (current == END) return if (visitedDac && visitedFft) 1 else 0
+        val newVisitedDac = if (current == REQUIRED_DAC) true else visitedDac
+        val newVisitedFft = if (current == REQUIRED_FFT) true else visitedFft
+        val cacheItem = Triple(current, newVisitedDac, newVisitedFft)
+        val cached = cache[cacheItem]
+        if (cached != null) return cached
+        val result =
+            graph[current]!!.sumOf {
+                countPaths2(graph, it, cache, newVisitedDac, newVisitedFft)
+            }
+        cache[cacheItem] = result
+        return result
     }
 
     const val EXAMPLE_1 = """aaa: you hhh
@@ -74,7 +103,20 @@ iii: out
 
     const val ANSWER_1 = "5"
 
-    const val EXAMPLE_2 = """"""
+    const val EXAMPLE_2 = """svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out
+"""
 
-    const val ANSWER_2 = ""
+    const val ANSWER_2 = "2"
 }
