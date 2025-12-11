@@ -22,6 +22,20 @@ fun main(): Unit =
             measureTime {
                 println(solve2(parseInput(input)))
             }.also { println("Part 2 finished in $it") }
+
+            println("Alternate solution")
+            measureTime {
+                check(solve1Alt(parseInput(EXAMPLE_1)) == ANSWER_1) { "Example 1 failed" }
+            }.also { println("Part 1 example 1 finished in $it") }
+            measureTime {
+                println(solve1Alt(parseInput(input)))
+            }.also { println("Part 1 finished in $it") }
+            measureTime {
+                check(solve2Alt(parseInput(EXAMPLE_2)) == ANSWER_2) { "Example 2 failed" }
+            }.also { println("Part 2 example 1 finished in $it") }
+            measureTime {
+                println(solve2Alt(parseInput(input)))
+            }.also { println("Part 2 finished in $it") }
         }
     }
 
@@ -86,6 +100,34 @@ object Day11 {
                 countPaths2(graph, it, cache, newVisitedDac, newVisitedFft)
             }
         cache[cacheItem] = result
+        return result
+    }
+
+    fun solve1Alt(input: Map<String, List<String>>): String = countPathsBetween(input, START_1, END).toString()
+
+    fun solve2Alt(input: Map<String, List<String>>): String =
+        (
+            countPathsBetween(input, START_2, REQUIRED_FFT) * countPathsBetween(input, REQUIRED_FFT, REQUIRED_DAC) *
+                countPathsBetween(input, REQUIRED_DAC, END) +
+                countPathsBetween(input, START_2, REQUIRED_DAC) * countPathsBetween(input, REQUIRED_DAC, REQUIRED_FFT) *
+                countPathsBetween(input, REQUIRED_FFT, END)
+        ).toString()
+
+    fun countPathsBetween(
+        graph: Map<String, List<String>>,
+        current: String,
+        target: String,
+        cache: MutableMap<String, Long> = mutableMapOf(),
+    ): Long {
+        if (current == target) return 1
+        if (current == END) return 0
+        val cached = cache[current]
+        if (cached != null) return cached
+        val result =
+            graph[current]!!.sumOf {
+                countPathsBetween(graph, it, target, cache)
+            }
+        cache[current] = result
         return result
     }
 
